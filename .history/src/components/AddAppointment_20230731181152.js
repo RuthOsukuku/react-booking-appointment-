@@ -1,5 +1,5 @@
 // import React, { useState } from "react";
-import React, { useState } from 'react';
+
 const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
   const [formData, setFormData] = useState({
     cancer_service: false,

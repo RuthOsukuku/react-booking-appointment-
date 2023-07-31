@@ -1,16 +1,14 @@
-// import React, { useState } from "react";
-import React, { useState } from 'react';
+import React, { useState } from "react";
+
 const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
   const [formData, setFormData] = useState({
-    cancer_service: false,
+    cancer_service: "",
     apt_date: "",
     apt_time: "",
     appointment_notes: "",
     patient_id: "",
     doctor_id: "",
   });
-
-  const { cancer_service, apt_date, apt_time, appointment_notes, patient_id, doctor_id } = formData;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -21,7 +19,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
     event.preventDefault();
     onAddAppointment(formData);
     setFormData({
-      cancer_service: false,
+      cancer_service: "",
       apt_date: "",
       apt_time: "",
       appointment_notes: "",
@@ -46,10 +44,11 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
             <div>
               <label className="block text-gray-700">Cancer Service:</label>
               <input
-                type="checkbox"
+                type="text"
                 name="cancer_service"
-                checked={cancer_service}
+                value={formData.cancer_service}
                 onChange={handleChange}
+                required
               />
             </div>
             <div className="mt-4">
@@ -57,7 +56,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
               <input
                 type="date"
                 name="apt_date"
-                value={apt_date}
+                value={formData.apt_date}
                 onChange={handleChange}
                 required
               />
@@ -67,7 +66,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
               <input
                 type="time"
                 name="apt_time"
-                value={apt_time}
+                value={formData.apt_time}
                 onChange={handleChange}
                 required
               />
@@ -76,7 +75,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
               <label className="block text-gray-700">Notes:</label>
               <textarea
                 name="appointment_notes"
-                value={appointment_notes}
+                value={formData.appointment_notes}
                 onChange={handleChange}
                 rows="3"
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
@@ -88,7 +87,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
               <input
                 type="number"
                 name="patient_id"
-                value={patient_id}
+                value={formData.patient_id}
                 onChange={handleChange}
                 required
               />
@@ -98,7 +97,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
               <input
                 type="number"
                 name="doctor_id"
-                value={doctor_id}
+                value={formData.doctor_id}
                 onChange={handleChange}
                 required
               />

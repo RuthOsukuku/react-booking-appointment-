@@ -115,136 +115,51 @@
 // };
 
 // export default Search;
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BiSearch, BiCaretDown, BiCheck } from "react-icons/bi";
 
-const DropDown = ({
-  toggle,
-  orderBy,
-  onOrderByChange,
-  sortBy,
-  onSortByChange,
-}) => {
-  return (
-    toggle && (
-      <div
-        className="origin-top-right absolute right-0 mt-2 w-56
-      rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-      >
-        <div
-          className="py-1"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="options-menu"
-        >
-          <div
-            onClick={() => onSortByChange("cancerService")}
-            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex justify-between cursor-pointer"
-            role="menuitem"
-          >
-            Cancer Service {sortBy === "cancerService" ? <BiCheck /> : null}
-          </div>
-          <div
-            onClick={() => onSortByChange("fullName")}
-            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex justify-between cursor-pointer"
-            role="menuitem"
-          >
-            Full Name {sortBy === "fullName" ? <BiCheck /> : null}
-          </div>
-          <div
-            onClick={() => onSortByChange("aptDate")}
-            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex justify-between cursor-pointer"
-            role="menuitem"
-          >
-            Date {sortBy === "aptDate" ? <BiCheck /> : null}
-          </div>
-          <div
-            onClick={() => onOrderByChange("asc")}
-            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex justify-between cursor-pointer border-gray-1 border-t-2"
-            role="menuitem"
-          >
-            Asc {orderBy === "asc" ? <BiCheck /> : null}
-          </div>
-          <div
-            onClick={() => onOrderByChange("desc")}
-            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex justify-between cursor-pointer"
-            role="menuitem"
-          >
-            Desc {orderBy === "desc" ? <BiCheck /> : null}
-          </div>
-        </div>
-      </div>
-    )
-  );
+const DropDown = ({ dropDownItems }) => {
+  // DropDown implementation
+  return <div>DropDown Component</div>;
 };
 
-const Search = ({
-  onQueryChange,
-  query,
-  orderBy,
-  onOrderByChange,
-  sortBy,
-  onSortByChange,
-}) => {
-  let [toggleSort, setToggleSort] = useState(false);
-  const [data, setData] = useState([]);
+const Search = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("http://localhost:9292/data");
+  const fetchSearchResults = async () => {
+    try {
+      const response = await fetch(`http://localhost:9292/api/search?q=${searchTerm}`);
       const data = await response.json();
-      setData(data);
-    };
-
-    fetchData();
-  }, []);
-
-  const handleOnChange = (event) => {
-    onQueryChange(event, data);
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
   };
 
+  useEffect(() => {
+    fetchSearchResults();
+  }, [searchTerm]);
+
   return (
-    <div className="py-5">
-      <div className="mt-1 relative rounded-md shadow-sm">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <BiSearch />
-          <label htmlFor="query" className="sr-only" />
-        </div>
+    <div>
+      <div>
+        <BiSearch size={20} />
         <input
-          onChange={handleOnChange}
           type="text"
-          name="query"
-          id="query"
-          value={query}
-          className="pl-8 rounded-md focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300"
-          placeholder="Search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search for appointments..."
         />
-        <div className="absolute inset-y-0 right-0 flex items-center">
-          <div>
-            <button
-              onClick={() => setToggleSort(!toggleSort)}
-              type="button"
-              className="justify-center px-4 py-2 bg-blue-400 border-2 border-blue-400 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center"
-              id="options-menu"
-              aria-haspopup="true"
-              aria-expanded="true"
-            >
-              Sort By <BiCaretDown className="ml-2" />
-            </button>
-            <DropDown
-              orderBy={orderBy}
-              sortBy={sortBy}
-              onOrderByChange={onOrderByChange}
-              onSortByChange={onSortByChange}
-              toggle={toggleSort}
-            />
-          </div>
-        </div>
+        <DropDown dropDownItems={searchResults} />
+      </div>
+      <div>
+        {searchResults.map((result) => (
+          <div key={result.id}>{result.name}</div>
+        ))}
       </div>
     </div>
   );
 };
 
 export default Search;
-
