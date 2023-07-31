@@ -1,6 +1,7 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a simple React app that allows users to schedule appointments to meet cancer oncologists and doctors. 
+It makes use of React, React Icons, and Tailwind CSS.
 
 ## Available Scripts
 
