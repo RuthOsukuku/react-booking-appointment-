@@ -32,27 +32,26 @@
 // export default AppointmentInfo;
 import { BiTrash } from "react-icons/bi";
 
-const AppointmentInfo = ({ appointment }) => {
-  const onDeleteAppointment = (id) => {
-    fetch(`http://localhost:9292/appointments/${id}`, {
-      method: "DELETE",
-    })
-    .then((r) => r.json())
-    .then((data) => {
-      if (data.message) {
-        console.log(data.message);
-      } else {
-        console.error("Error:", data);
-      }
-    });
-  };
-
+const AppointmentInfo = ({ appointment, onDeleteAppointment }) => {
   return (
     <li className="px-3 py-3 flex items-start">
       <button
         type="button"
         onClick={() => {
-          onDeleteAppointment(appointment.id);
+          fetch(`http://localhost:9292/appointments/${appointment.id}`, {
+            method: 'DELETE',
+          })
+          .then(response => {
+            if(response.ok) {
+              console.log('Success: Appointment deleted');
+              onDeleteAppointment(appointment.id);
+            } else {
+              throw new Error('Error: ' + response.statusText);
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
         }}
         className="p-1.5 mr-1.5 mt-1 rounded text-white bg-red-500 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
       >

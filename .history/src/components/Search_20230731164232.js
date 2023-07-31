@@ -118,9 +118,6 @@
 import { useState, useEffect } from "react";
 import { BiSearch, BiCaretDown, BiCheck } from "react-icons/bi";
 
-import { useState, useEffect } from "react";
-import { BiSearch, BiCaretDown, BiCheck } from "react-icons/bi";
-
 const DropDown = ({
   toggle,
   orderBy,
@@ -193,23 +190,28 @@ const Search = () => {
   }, [query, orderBy, sortBy]);
 
   const searchAppointments = async () => {
-    let url = `http://localhost:9292/appointments?query=${query}&orderBy=${orderBy}&sortBy=${sortBy}`;
+    let url = new URL("http://localhost:4567/appointments"); // replace with your API URL
+    url.search = new URLSearchParams({ query, orderBy, sortBy });
 
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => setAppointments(data));
+    const response = await fetch(url);
+    const data = await response.json();
+
+    setAppointments(data);
   }
 
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
+    searchAppointments();
   };
 
   const handleOrderByChange = (newOrderBy) => {
     setOrderBy(newOrderBy);
+    searchAppointments();
   };
 
   const handleSortByChange = (newSortBy) => {
     setSortBy(newSortBy);
+    searchAppointments();
   };
 
   return (

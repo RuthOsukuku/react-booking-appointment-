@@ -165,83 +165,33 @@
 // };
 
 // export default AddAppointment;
-import { useState } from "react";
-import { BiCalendarPlus } from "react-icons/bi";
+const formDataPosted = () => {
+  if (formData.cancerService && formData.fullName && formData.aptDate) {
+    const appointmentInfo = {
+      id: lastId + 1,
+      cancerService: formData.cancerService,
+      fullName: formData.fullName,
+      aptNotes: formData.aptNotes,
+      aptDate: formData.aptDate + " " + formData.aptTime,
+    };
 
-const AddAppointment = () => {
-  const clearData = {
-    cancerService: "",
-    fullName: "",
-    aptNotes: "",
-    aptDate: "",
-    aptTime: "",
-  };
-
-  let [toggleForm, setToggleForm] = useState(false);
-  let [formData, setFormData] = useState(clearData);
-
-  const formDataPosted = () => {
-    if (formData.cancerService && formData.fullName && formData.aptDate) {
-      const appointmentInfo = {
-        cancerService: formData.cancerService,
-        fullName: formData.fullName,
-        aptNotes: formData.aptNotes,
-        aptDate: formData.aptDate + " " + formData.aptTime,
-      };
-      
-      // Sending a POST request to the backend
-      fetch('http://localhost:9292/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(appointmentInfo),
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          console.log(data.message);
-          setFormData(clearData);
-          setToggleForm(!toggleForm);
-        } else {
-          console.error("Error:", data);
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-      
-    } else {
-      alert("fill required fields");
-    }
-  };
-
-  return (
-    <div>
-      <button
-        onClick={() => setToggleForm(!toggleForm)}
-        className={`bg-blue-400 text-white px-2 py-3 w-full text-left  ${
-          toggleForm ? "rounded-t-md" : "rounded-md"
-        }`}
-      >
-        <div>
-          <BiCalendarPlus className="inline-block align-text-top" /> Add
-          Appointment
-        </div>
-      </button>
-      {toggleForm && (
-        <div className="border-r-2 border-b-2 border-l-2 border-light-blue-500 rounded-b-md pl-4 pr-4 pb-4">
-          {/*... rest of your form component*/}
-          <button
-            onClick={formDataPosted}
-            className="bg-blue-500 text-white px-2 py-3 w-full text-left rounded-md"
-          >
-            Submit
-          </button>
-        </div>
-      )}
-    </div>
-  );
+    fetch('http://localhost:9292/appointments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(appointmentInfo),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      setFormData(clearData);
+      setToggleForm(!toggleForm);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  } else {
+    alert("fill required fields");
+  }
 };
-
-export default AddAppointment;
