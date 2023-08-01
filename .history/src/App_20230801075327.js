@@ -105,14 +105,14 @@ function App() {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("cancerService");
   const [orderBy, setOrderBy] = useState("asc");
-  const [toggleForm, setToggleForm] = useState(false);
+  const [toggleForm, setToggleForm] = useState(false); // Add the toggleForm state here
 
   const handleAddAppointment = (appointment) => {
     setAppointmentList([...appointmentList, appointment]);
   };
 
   const handleToggleForm = () => {
-    setToggleForm(!toggleForm);
+    setToggleForm(!toggleForm); // Toggle the form visibility
   };
 
   const fetchData = useCallback(() => {
@@ -130,19 +130,7 @@ function App() {
     fetchData();
   }, [fetchData]);
 
-  // Filter and sort the appointments based on the search query, sortBy, and orderBy
-  const filteredAppointment = appointmentList
-    .filter((item) => {
-      return (
-        (item.cancerService?.toLowerCase() || "").includes(query.toLowerCase()) ||
-        (item.fullName?.toLowerCase() || "").includes(query.toLowerCase()) ||
-        (item.aptNotes?.toLowerCase() || "").includes(query.toLowerCase())
-      );
-    })
-    .sort((a, b) => {
-      let order = orderBy === "asc" ? 1 : -1;
-      return (a[sortBy]?.toLowerCase() || "") < (b[sortBy]?.toLowerCase() || "") ? -1 * order : 1 * order;
-    });
+  // ... (rest of the code)
 
   return (
     <>
@@ -152,9 +140,9 @@ function App() {
           Your Appointments
         </h1>
         <AddAppointment
-          onAddAppointment={handleAddAppointment}
-          onToggleForm={handleToggleForm}
-          toggleForm={toggleForm}
+          onAddAppointment={handleAddAppointment} // Pass the correct onAddAppointment function here
+          onToggleForm={handleToggleForm} // Pass the handleToggleForm function here
+          toggleForm={toggleForm} // Pass the toggleForm state here
         />
         <Search
           query={query}
@@ -176,7 +164,9 @@ function App() {
               <AppointmentInfo
                 onDeleteAppointment={(appointmentId) => {
                   setAppointmentList(
-                    appointmentList.filter((appointment) => appointmentId !== appointment.id)
+                    appointmentList.filter(
+                      (appointment) => appointmentId !== appointment.id
+                    )
                   );
                 }}
                 appointment={appointment}
@@ -191,6 +181,5 @@ function App() {
 }
 
 export default App;
-
 
 

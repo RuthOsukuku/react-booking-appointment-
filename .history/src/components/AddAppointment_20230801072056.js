@@ -128,16 +128,18 @@
 // export default AddAppointment;
 // App.js
 
-import React, { useState } from "react";
+
+
+import React, { useState } from 'react';
 
 const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
   const [formData, setFormData] = useState({
     cancer_service: false,
-    apt_date: "",
-    apt_time: "",
-    appointment_notes: "",
-    patient_id: "",
-    doctor_id: "",
+    apt_date: '',
+    apt_time: '',
+    appointment_notes: '',
+    patient_id: '',
+    doctor_id: '',
   });
 
   const { cancer_service, apt_date, apt_time, appointment_notes, patient_id, doctor_id } = formData;
@@ -152,11 +154,11 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
     onAddAppointment(formData);
     setFormData({
       cancer_service: false,
-      apt_date: "",
-      apt_time: "",
-      appointment_notes: "",
-      patient_id: "",
-      doctor_id: "",
+      apt_date: '',
+      apt_time: '',
+      appointment_notes: '',
+      patient_id: '',
+      doctor_id: '',
     });
     onToggleForm();
   };
@@ -168,7 +170,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
-            onClick={onToggleForm}
+            onClick={() => onToggleForm()}
           >
             Cancel
           </button>
@@ -246,7 +248,7 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="button"
-          onClick={onToggleForm}
+          onClick={() => onToggleForm()}
         >
           Add Appointment
         </button>
@@ -256,4 +258,3 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
 };
 
 export default AddAppointment;
-

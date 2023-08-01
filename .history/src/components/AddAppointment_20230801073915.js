@@ -128,16 +128,16 @@
 // export default AddAppointment;
 // App.js
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
+const AddAppointment = ({ onSendAppointment, lastId }) => {
   const [formData, setFormData] = useState({
     cancer_service: false,
-    apt_date: "",
-    apt_time: "",
-    appointment_notes: "",
-    patient_id: "",
-    doctor_id: "",
+    apt_date: '',
+    apt_time: '',
+    appointment_notes: '',
+    patient_id: '',
+    doctor_id: '',
   });
 
   const { cancer_service, apt_date, apt_time, appointment_notes, patient_id, doctor_id } = formData;
@@ -149,111 +149,103 @@ const AddAppointment = ({ onAddAppointment, onToggleForm, toggleForm }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onAddAppointment(formData);
+    const newAppointment = {
+      id: (lastId + 1).toString(),
+      cancerService: cancer_service,
+      aptDate: apt_date,
+      aptTime: apt_time,
+      aptNotes: appointment_notes,
+      fullName: `Patient ID: ${patient_id}`,
+      doctorId: doctor_id,
+    };
+    onSendAppointment(newAppointment);
     setFormData({
       cancer_service: false,
-      apt_date: "",
-      apt_time: "",
-      appointment_notes: "",
-      patient_id: "",
-      doctor_id: "",
+      apt_date: '',
+      apt_time: '',
+      appointment_notes: '',
+      patient_id: '',
+      doctor_id: '',
     });
-    onToggleForm();
   };
 
   return (
     <div>
-      {toggleForm && (
-        <div className="my-4">
+      <div className="my-4">
+        <form onSubmit={handleSubmit} className="mt-4">
+          <div>
+            <label className="block text-gray-700">Cancer Service:</label>
+            <input
+              type="checkbox"
+              name="cancer_service"
+              checked={cancer_service}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mt-4">
+            <label className="block text-gray-700">Date:</label>
+            <input
+              type="date"
+              name="apt_date"
+              value={apt_date}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mt-4">
+            <label className="block text-gray-700">Time:</label>
+            <input
+              type="time"
+              name="apt_time"
+              value={apt_time}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mt-4">
+            <label className="block text-gray-700">Notes:</label>
+            <textarea
+              name="appointment_notes"
+              value={appointment_notes}
+              onChange={handleChange}
+              rows="3"
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+              required
+            ></textarea>
+          </div>
+          <div className="mt-4">
+            <label className="block text-gray-700">Patient ID:</label>
+            <input
+              type="number"
+              name="patient_id"
+              value={patient_id}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mt-4">
+            <label className="block text-gray-700">Doctor ID:</label>
+            <input
+              type="number"
+              name="doctor_id"
+              value={doctor_id}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="button"
-            onClick={onToggleForm}
+            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
           >
-            Cancel
+            Save Appointment
           </button>
-          <form onSubmit={handleSubmit} className="mt-4">
-            <div>
-              <label className="block text-gray-700">Cancer Service:</label>
-              <input
-                type="checkbox"
-                name="cancer_service"
-                checked={cancer_service}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-gray-700">Date:</label>
-              <input
-                type="date"
-                name="apt_date"
-                value={apt_date}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-gray-700">Time:</label>
-              <input
-                type="time"
-                name="apt_time"
-                value={apt_time}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-gray-700">Notes:</label>
-              <textarea
-                name="appointment_notes"
-                value={appointment_notes}
-                onChange={handleChange}
-                rows="3"
-                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
-                required
-              ></textarea>
-            </div>
-            <div className="mt-4">
-              <label className="block text-gray-700">Patient ID:</label>
-              <input
-                type="number"
-                name="patient_id"
-                value={patient_id}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-gray-700">Doctor ID:</label>
-              <input
-                type="number"
-                name="doctor_id"
-                value={doctor_id}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <button
-              className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Save Appointment
-            </button>
-          </form>
-        </div>
-      )}
-      {!toggleForm && (
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="button"
-          onClick={onToggleForm}
-        >
-          Add Appointment
-        </button>
-      )}
+        </form>
+      </div>
     </div>
   );
 };
 
 export default AddAppointment;
+
+
 

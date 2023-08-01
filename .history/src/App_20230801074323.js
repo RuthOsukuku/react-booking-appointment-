@@ -94,29 +94,36 @@
 // }
 
 // export default App;
-import React, { useState, useEffect, useCallback } from "react";
-import { BiCalendar } from "react-icons/bi";
-import AddAppointment from "./components/AddAppointment";
-import AppointmentInfo from "./components/AppointmentInfo";
-import Search from "./components/Search";
+import { BiCalendar } from 'react-icons/bi';
+import { useEffect, useState, useCallback } from 'react';
+import AddAppointment from './components/AddAppointment';
+import AppointmentInfo from './components/AppointmentInfo';
+import Search from './components/Search';
 
 function App() {
   const [appointmentList, setAppointmentList] = useState([]);
-  const [query, setQuery] = useState("");
-  const [sortBy, setSortBy] = useState("cancerService");
-  const [orderBy, setOrderBy] = useState("asc");
-  const [toggleForm, setToggleForm] = useState(false);
+  const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState('cancerService');
+  const [orderBy, setOrderBy] = useState('asc');
+  const [toggleForm, setToggleForm] = useState(false); // Define the toggleForm state and function
 
-  const handleAddAppointment = (appointment) => {
-    setAppointmentList([...appointmentList, appointment]);
-  };
-
-  const handleToggleForm = () => {
-    setToggleForm(!toggleForm);
-  };
+  const filteredAppointment = appointmentList
+    .filter((item) => {
+      return (
+        (item.cancerService?.toLowerCase() || '').includes(query.toLowerCase()) ||
+        (item.fullName?.toLowerCase() || '').includes(query.toLowerCase()) ||
+        (item.aptNotes?.toLowerCase() || '').includes(query.toLowerCase())
+      );
+    })
+    .sort((a, b) => {
+      let order = orderBy === 'asc' ? 1 : -1;
+      return (a[sortBy]?.toLowerCase() || '') < (b[sortBy]?.toLowerCase() || '')
+        ? -1 * order
+        : 1 * order;
+    });
 
   const fetchData = useCallback(() => {
-    fetch("./data.json")
+    fetch('./data.json')
       .then((response) => response.json())
       .then((data) => {
         setAppointmentList(data);
@@ -130,20 +137,6 @@ function App() {
     fetchData();
   }, [fetchData]);
 
-  // Filter and sort the appointments based on the search query, sortBy, and orderBy
-  const filteredAppointment = appointmentList
-    .filter((item) => {
-      return (
-        (item.cancerService?.toLowerCase() || "").includes(query.toLowerCase()) ||
-        (item.fullName?.toLowerCase() || "").includes(query.toLowerCase()) ||
-        (item.aptNotes?.toLowerCase() || "").includes(query.toLowerCase())
-      );
-    })
-    .sort((a, b) => {
-      let order = orderBy === "asc" ? 1 : -1;
-      return (a[sortBy]?.toLowerCase() || "") < (b[sortBy]?.toLowerCase() || "") ? -1 * order : 1 * order;
-    });
-
   return (
     <>
       <div className="App container mx-auto mt-3 font-thin">
@@ -152,9 +145,15 @@ function App() {
           Your Appointments
         </h1>
         <AddAppointment
-          onAddAppointment={handleAddAppointment}
-          onToggleForm={handleToggleForm}
-          toggleForm={toggleForm}
+          onSendAppointment={(appointment) => {
+            setAppointmentList([...appointmentList, appointment]);
+          }}
+          onToggleForm={() => setToggleForm(!toggleForm)} // Pass the toggleForm function as a prop
+          toggleForm={toggleForm} // Pass the toggleForm state as a prop
+          lastId={appointmentList.reduce(
+            (pre, curr) => (Number(curr.id) > pre ? Number(curr.id) : pre),
+            0
+          )}
         />
         <Search
           query={query}
@@ -176,7 +175,9 @@ function App() {
               <AppointmentInfo
                 onDeleteAppointment={(appointmentId) => {
                   setAppointmentList(
-                    appointmentList.filter((appointment) => appointmentId !== appointment.id)
+                    appointmentList.filter(
+                      (appointment) => appointmentId !== appointment.id
+                    )
                   );
                 }}
                 appointment={appointment}
@@ -191,6 +192,4 @@ function App() {
 }
 
 export default App;
-
-
 

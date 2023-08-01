@@ -94,8 +94,8 @@
 // }
 
 // export default App;
-import React, { useState, useEffect, useCallback } from "react";
 import { BiCalendar } from "react-icons/bi";
+import { useEffect, useState, useCallback } from "react";
 import AddAppointment from "./components/AddAppointment";
 import AppointmentInfo from "./components/AppointmentInfo";
 import Search from "./components/Search";
@@ -105,18 +105,9 @@ function App() {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("cancerService");
   const [orderBy, setOrderBy] = useState("asc");
-  const [toggleForm, setToggleForm] = useState(false);
 
-  const handleAddAppointment = (appointment) => {
-    setAppointmentList([...appointmentList, appointment]);
-  };
-
-  const handleToggleForm = () => {
-    setToggleForm(!toggleForm);
-  };
-
-  const fetchData = useCallback(() => {
-    fetch("./data.json")
+  const fetchAppointments = useCallback(() => {
+    fetch("/appointments")
       .then((response) => response.json())
       .then((data) => {
         setAppointmentList(data);
@@ -127,21 +118,49 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchAppointments();
+  }, [fetchAppointments]);
 
-  // Filter and sort the appointments based on the search query, sortBy, and orderBy
-  const filteredAppointment = appointmentList
+  const handleAddAppointment = (appointment) => {
+    fetch("/appointments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(appointment),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setAppointmentList([...appointmentList, data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDeleteAppointment = (appointmentId) => {
+    fetch(`/appointments/${appointmentId}`, {
+      method: "DELETE",
+    })
+      .then(() => {
+        setAppointmentList(appointmentList.filter((appointment) => appointmentId !== appointment.id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const filteredAppointments = appointmentList
     .filter((item) => {
       return (
-        (item.cancerService?.toLowerCase() || "").includes(query.toLowerCase()) ||
-        (item.fullName?.toLowerCase() || "").includes(query.toLowerCase()) ||
-        (item.aptNotes?.toLowerCase() || "").includes(query.toLowerCase())
+        item.cancerService.toLowerCase().includes(query.toLowerCase()) ||
+        item.fullName.toLowerCase().includes(query.toLowerCase()) ||
+        item.aptNotes.toLowerCase().includes(query.toLowerCase())
       );
     })
     .sort((a, b) => {
       let order = orderBy === "asc" ? 1 : -1;
-      return (a[sortBy]?.toLowerCase() || "") < (b[sortBy]?.toLowerCase() || "") ? -1 * order : 1 * order;
+      return (a[sortBy].toLowerCase() < b[sortBy].toLowerCase()) ? -1 * order : 1 * order;
     });
 
   return (
@@ -153,8 +172,9 @@ function App() {
         </h1>
         <AddAppointment
           onAddAppointment={handleAddAppointment}
-          onToggleForm={handleToggleForm}
+          onToggleForm={toggleForm}
           toggleForm={toggleForm}
+          lastId={appointmentList.reduce((pre, curr) => (Number(curr.id) > pre ? Number(curr.id) : pre), 0)}
         />
         <Search
           query={query}
@@ -171,14 +191,10 @@ function App() {
           }}
         />
         <ul className="divide-y divide-gray-200">
-          {filteredAppointment.map((appointment) => {
+          {filteredAppointments.map((appointment) => {
             return (
               <AppointmentInfo
-                onDeleteAppointment={(appointmentId) => {
-                  setAppointmentList(
-                    appointmentList.filter((appointment) => appointmentId !== appointment.id)
-                  );
-                }}
+                onDeleteAppointment={() => handleDeleteAppointment(appointment.id)}
                 appointment={appointment}
                 key={appointment.id}
               />
@@ -191,6 +207,3 @@ function App() {
 }
 
 export default App;
-
-
-
